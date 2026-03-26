@@ -11,7 +11,20 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { AdmitCardView } from "@/components/student/AdmitCardView";
 import { ApplicationReceipt } from "@/components/student/ApplicationReceipt";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { LogOut, FileText, CreditCard, BookOpen, Calendar, Clock, IndianRupee, User, AlertCircle, Eye, ArrowUpDown } from "lucide-react";
+import { 
+  LogOut, 
+  FileText, 
+  CreditCard, 
+  BookOpen, 
+  Calendar, 
+  Clock, 
+  IndianRupee, 
+  User, 
+  AlertCircle, 
+  Eye, 
+  ArrowUpDown,
+  RefreshCw
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { getGroupLabel, getGroupClasses, getGroupDetails } from "@/lib/groups";
 import { toast } from "sonner";
@@ -25,11 +38,11 @@ export default function StudentDashboard() {
   const [sortBy, setSortBy] = useState<string>("newest");
   const [receiptApp, setReceiptApp] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     if (!user || !profile) {
       if (user && !profile) {
-        // Profile might be loading, wait a bit
         const timer = setTimeout(() => {
           window.location.reload();
         }, 2000);
@@ -41,7 +54,6 @@ export default function StudentDashboard() {
     const fetchData = async () => {
       setLoading(true);
       try {
-        // Fetch exams for the student's group
         const { data: examsData, error: examsError } = await supabase
           .from("exams")
           .select("*")
@@ -56,7 +68,6 @@ export default function StudentDashboard() {
           setExams(examsData || []);
         }
 
-        // Fetch applications
         const { data: appsData, error: appsError } = await supabase
           .from("exam_applications")
           .select("*, exams(title, exam_date, fee_amount, class, duration_minutes, exam_time, exam_type, subjects, total_marks, instructions, last_date_to_apply)")
@@ -68,7 +79,6 @@ export default function StudentDashboard() {
           setApplications(appsData || []);
         }
 
-        // Fetch admit cards
         const { data: admitData, error: admitError } = await supabase
           .from("admit_cards")
           .select("*, exams(title, exam_date, exam_time, duration_minutes, subjects, total_marks, exam_type, exam_pattern, instructions), exam_centers(center_name, center_code, address, city, state, pincode, reporting_time, gate_closing_time)")
@@ -89,6 +99,29 @@ export default function StudentDashboard() {
 
     fetchData();
   }, [user, profile]);
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    try {
+      const { data: admitData, error: admitError } = await supabase
+        .from("admit_cards")
+        .select("*, exams(title, exam_date, exam_time, duration_minutes, subjects, total_marks, exam_type, exam_pattern, instructions), exam_centers(center_name, center_code, address, city, state, pincode, reporting_time, gate_closing_time)")
+        .eq("user_id", user?.id);
+      
+      if (admitError) {
+        console.error("Error refreshing admit cards:", admitError);
+        toast.error("Failed to refresh");
+      } else {
+        setAdmitCards(admitData || []);
+        toast.success("Refreshed successfully!");
+      }
+    } catch (error) {
+      console.error("Error refreshing:", error);
+      toast.error("Failed to refresh");
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   const hasApplied = (examId: string) => applications.some(a => a.exam_id === examId);
   const getApplication = (examId: string) => applications.find(a => a.exam_id === examId);
@@ -350,7 +383,34 @@ export default function StudentDashboard() {
           </TabsContent>
 
           <TabsContent value="admitcards">
-            <AdmitCardView admitCards={admitCards} profile={profile} />
+            {admitCards.length === 0 ? (
+              <Card className="border-dashed border-2 border-accent/30">
+                <CardContent className="py-12 text-center">
+                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-accent/10 mb-4">
+                    <CreditCard className="h-8 w-8 text-accent" />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-2">Coming Soon!</h3>
+                  <p className="text-muted-foreground max-w-md mx-auto">
+                    Admit cards will be available here once released by the examination authority.
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-3">
+                    Please check back after completing your application. You will be notified when your admit card is ready.
+                  </p>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="mt-6 gap-2"
+                    onClick={handleRefresh}
+                    disabled={refreshing}
+                  >
+                    <RefreshCw className={`h-3 w-3 ${refreshing ? "animate-spin" : ""}`} />
+                    {refreshing ? "Checking..." : "Check for Updates"}
+                  </Button>
+                </CardContent>
+              </Card>
+            ) : (
+              <AdmitCardView admitCards={admitCards} profile={profile} />
+            )}
           </TabsContent>
         </Tabs>
       </div>
