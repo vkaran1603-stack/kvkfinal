@@ -136,7 +136,7 @@ const CompanyHome = () => {
       title: "सामान्य ज्ञान प्रतियोगिता",
       titleEn: "General Knowledge Competition",
       description: "Annual GK competition for students with cash prizes and certificates.",
-      impact: "5000+ Students Participated",
+      impact: "500+ Students Participated",
       year: "2024"
     },
     {
@@ -152,7 +152,7 @@ const CompanyHome = () => {
       title: "महिला सशक्तिकरण",
       titleEn: "Women Empowerment",
       description: "Skill development and self-help groups for women entrepreneurs.",
-      impact: "200+ Women Trained",
+      impact: "50+ Women Trained",
       year: "2024"
     },
     {
@@ -160,7 +160,7 @@ const CompanyHome = () => {
       title: "डिजिटल साक्षरता अभियान",
       titleEn: "Digital Literacy Drive",
       description: "Teaching digital skills to rural communities for better opportunities.",
-      impact: "1000+ People Trained",
+      impact: "100+ People Trained",
       year: "2023-24"
     }
   ];
