@@ -68,7 +68,7 @@ const CompanyHome = () => {
     registeredUnder: "Societies Registration Act, 1860 (Act No. 21, 1860)",
     registeredAddress: "ग्राम बीरभानपुर, जिला वाराणसी, Varanasi, Uttar Pradesh - 221311",
     email: "kvk2025vns@gmail.com",
-    phone: "6352061910",
+    phone: "9415197588",
     workArea: "सम्पूर्ण उत्तर प्रदेश (Entire Uttar Pradesh)",
     registrar: "Registrar of Societies, Uttar Pradesh",
     digitallySignedBy: "Mangalesh Singh Paliwal"
