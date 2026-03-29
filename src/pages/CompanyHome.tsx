@@ -210,7 +210,7 @@ const CompanyHome = () => {
       
       {/* Exam Portal Notification Bar */}
       <div 
-        className="bg-red-600 hover:bg-red-700 cursor-pointer transition-colors py-2 md:py-3 px-3 md:px-4 border-b border-red-700"
+        className="bg-green-600 hover:bg-yellow-300 cursor-pointer transition-colors py-2 md:py-3 px-3 md:px-4 border-b border-red-700"
         onClick={() => setShowExamPopup(true)}
       >
         <div className="container mx-auto">
